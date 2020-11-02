@@ -23,6 +23,20 @@ class token(str):
 
         self.tokens = list_tokenizer(self.arbitrary_token)
 
+class item(str):
+    item_regex = r"^(\s*)([*+-]|\d+).{,1} (.*\n(?:.+(?:\n|\Z))*)"
+
+    def __init__(self, item):   
+        self.item = item
+        item_search = re.search(self.item_regex, self.item,
+                                re.IGNORECASE | re.MULTILINE)
+        self.item_level = len(item_search.group(1))
+        try:
+            int(item_search.group(2))
+            self.is_ordered = True
+        except ValueError:
+            self.is_ordered = False
+        self.content = (" ".join(item_search.group(3).split())).replace('. ', '.\n')
 
 advanced_regex = r"^ *(?:(?:[\+\-\*]|\d+.) )(.*)(?:\n^(?! *(?:[*+-]|\d)) *(.*))*"
 
